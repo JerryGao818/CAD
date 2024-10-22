@@ -282,7 +282,7 @@ def run(config, rocs, prns, seed):
 
     config.max_anomaly = num_train_anomalies
     config.min_anomaly = int(num_train_anomalies* 0.5) 
-    if X.shape[0] < 50000:   # small number of learning epochs is enough for large datasets
+    if X.shape[0] < 50000:   # smaller number of learning epochs is enough for large datasets
         config.n_epochs = 60
         config.early_stop = 40
     else:
