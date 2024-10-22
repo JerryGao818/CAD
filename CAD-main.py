@@ -187,7 +187,7 @@ def train(config, anomaly_train_loader, normal_train_loader, test_loader, train_
             Y = torch.cat((Y, y), dim=-1)
         
 
-        if epoch > int(config.n_epochs/2):  
+        if epoch > int(config.n_epochs/2):   # Stage 2 - Anomalous sample expansion
             _, expanded_anomalies = torch.topk(Out, num_label)
             correct1 = y_true[expanded_anomalies].sum()
             print(correct1, correct1/num_label)
@@ -251,7 +251,7 @@ def run(config, rocs, prns, seed):
     num_train_anomaly = int(config.labeled_ratio * num_total_anomaly * 0.8)
     train_anomaly_indice = np.where(y_train == 1)[0]
     train_anomaly_indice = train_anomaly_indice[:num_train_anomaly]
-    train_normal_indice, config.n_pseudos = normal_sample_denoising(X_train, y_train)
+    train_normal_indice, config.n_pseudos = normal_sample_denoising(X_train, y_train)  # Stage 1 - Normal sample denoising
     
     num_train_normals = len(train_normal_indice)
     num_train_anomalies = len(train_anomaly_indice)
@@ -282,7 +282,7 @@ def run(config, rocs, prns, seed):
 
     config.max_anomaly = num_train_anomalies
     config.min_anomaly = int(num_train_anomalies* 0.5) 
-    if X.shape[0] < 50000:
+    if X.shape[0] < 50000:   # small number of learning epochs is enough for large datasets
         config.n_epochs = 60
         config.early_stop = 40
     else:
@@ -296,19 +296,16 @@ def run(config, rocs, prns, seed):
     prns.append(prn)
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Model parameters")
-    parser.add_argument('--dataset', default='pima.mat.json', type=str, help='Dataset') 
-    parser.add_argument('--batch_size', default=128, type=int, help='Batch size')
+    parser = argparse.ArgumentParser(description="Hyperparameters")
+    parser.add_argument('--dataset', default='Cardiotocography.json', type=str, help='Dataset') 
+    parser.add_argument('--batch_size', default=128, type=int, help='Batch size, you may increase it when dealing with large datasets')
     parser.add_argument('--learning_rate', default=0.001, type=float, help='Learning rate')
-    parser.add_argument('--labeled_ratio', default=0.05, type=float, help='ratio of labeled anomalies')
-    parser.add_argument('-o', default=None, type=str, help='output file')
+    parser.add_argument('--labeled_ratio', default=0.05, type=float, help='Ratio of labeled anomalies')
+    parser.add_argument('-o', default=None, type=str, help='Output file')
     return parser.parse_args()
 
 
 config = parse_args()
-print(config)
-
-
 seed_list = range(10)
 rocs = []
 prns = []
