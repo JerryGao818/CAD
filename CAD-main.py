@@ -94,22 +94,6 @@ class NCELoss2(nn.Module):
         return loss.mean()
     
 
-def get_batch(x0_idx, y_batch, config, normal_train_loader, anomaly_train_loader):
-    n_anomaly = random.randint(config.min_anomaly, config.max_anomaly)
-    anomaly_idx, anomaly_y = next(iter(anomaly_train_loader))
-    indices = torch.randperm(anomaly_idx.shape[0])[:n_anomaly]
-    anomaly_idx, anomaly_y = anomaly_idx[indices], anomaly_y[indices]
-
-    normal_idx, normal_y = next(iter(normal_train_loader))
-    indices = torch.randperm(normal_idx.shape[0])[:(3*n_anomaly)]
-    normal_idx, normal_y = normal_idx[indices], normal_y[indices]
-
-    x0_idx = torch.cat((anomaly_idx, x0_idx, normal_idx), dim=0)
-    y_batch = torch.cat((anomaly_y, y_batch, normal_y), dim=0)
-
-    return x0_idx, y_batch
-
-
 def normal_sample_denoising(X, y):
     try:
         clf = CBLOF()
