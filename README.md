@@ -1,5 +1,5 @@
 # CAD
-Code for Semi-Supervised Anomaly Detection through Denoising-Aware Contrastive Distance Learning submitted to WWW'25.
+Code for WWW'25 paper "Semi-Supervised Anomaly Detection through Denoising-Aware Contrastive Distance Learning".
 
 CAD is implemented using PyTorch. You may need the packages below to run CAD:
 
